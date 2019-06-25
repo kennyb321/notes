@@ -1,0 +1,17 @@
+<h1> Time </h1>
+Python library that handles date and time.
+
+<h1>Tick</h1>
+Time Intervaks are floating-point numbers in units of seconds since 12:00 AM, January 1, 1970. This Time and date is called the
+Epoch. All time is nmeasured in milliseconds since the Epoch.
+
+Example
+'''
+import time
+ticks_since_epoch = time.time()
+print("Number of ticks since 12:00AM, January 1, 1970 is: " + ticks)
+'''
+
+Output:
+'''
+Number of ticks since 12:00AM, January 1, 1970: 7186862.73399
