@@ -128,6 +128,11 @@ We are going to build a small Flask application to receive incoming messages. Be
 
 Most Twilio services use **webhooks** to communicate with your applicatrion. When Twilio receivs and SMS, it reaches out to a URL in our Application for instructions on how to handle the message.
 
+#### Webhooks
+Webhooks allow you to build or set up integrations, such as Github Apps, which subscribe to certain events. When one of these events is triggered, well send an HTTP POST Payload to the webhooks URL.
+   Webhooks can be used to update -an external issue tracker.
+
+
 When working on your Flask Application in your development environment, your app is only available to the rest of your computer. We need to make it accessible over the internet.
 
 There are a couple ways to do this, such as
@@ -196,9 +201,112 @@ Send a text message from your mobile phone. You should see a HTTP request in you
 
 
 
- 
+ # YEEEEES IT WOOOOOORRRKKKSS!!!!!!
+Finnaly got it working.
+ok, so basically it breaks down like this.
+1)Buy a Twilio Account.
+2)Save auth_token and account_sid
+3)install twilio. We can now send text messages programatically with ouy python app. But we cannot receive messages. Right now our app can only talk to our local network. In order to connect it to the rest of the worl we need to set up a Flask web App.
+4) Install and activate dev_env
+	*pip install virtualenv
+	*cd projectFolder
+	*virtualenv --no-site-packages
+	*SOURCE BIN/ACTIVATE
+	*Youll know your virtualenv is active beacuse yioull see your path in parentheses.
+5)Install Flask and dependancys
+	*create text file named **requirements.txt** and add following code
+		*Flask>=0.12
+		*twilio~=6.0.0
+6) install both packages and dependancys
+	*bin/pip install -r requirements.txt
+7) Download **ngrok**. Ngrok creates a unique url on the ngrok.io domain which forwards incoming requests to your local development env.
+	*extract ngrok binary into our project folder.
+8) Create file called **run.py** and add following code,
+```
+from flask import Flask, request
+from twilio.twiml.messaging_response import MessagingResponse
+
+app = Flask(__name__)
+
+@app.route("/sms", methods=['GET', 'POST'])
+def sms_ahoy_reply():
+    """Respond to incoming messages with a friendly SMS."""
+    # Start our response
+    resp = MessagingResponse()
+
+    # Add a message
+    resp.message("Ahoy! Thanks so much for your message.")
+
+    return str(resp)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+9)open terminal and run
+``` 
+python run.py
+```.
+10) in a seperate terminal, while **run.py** is still running, launch ngrok with following command:
+```
+./ngrok http 5000
+```.
+
+In the url after **forwarding**, copy the url.
+11) Go to Twilio homepage -> **Console's Numbers Page**
+	*Click on your phone number'
+	*Find the messaging section where it says **A MESSAGE COMES IN**.
+	*Paste the URL we copied from Ngrok, and add .sms to it.
+	*it should look something like this,
+	``` 
+	 https://c886e0c1.ngrok.io/sms
+	```.
+12) Text your Twilio Phone number. The incoming text will register with your ngrok console as an incoming HTTP request. Your Flask app will proccess the request and respond with your defined function, which in this case texts bback with a message.
 
 
+# run.py exaplained
+This is the Flask app that responds to SMS Text messages on local Server and responds with a message of its own.
+Code is as Follows
+```
+from flask import Flask, request
+from twilio.twiml.messaging_response import MessagingResponse
+
+app = Flask(__name__)
+
+@app.route("/sms", methods=['GET', 'POST'])
+def sms_ahoy_reply():
+	#respond to incoming messages with a friendly response
+	resp = MessagingResponse()
+
+	#add a message
+	resp.message("Ahoy! Thanks so much for your message!")
+
+	return str(resp)
+
+if __name__ == '__main__':
+	app.run(debug=True)
+```
+.
+
+#### app = Flask(__name__)
+
+Create an instance of the Flask class for our app. 
+If you are using a single module, you use __name__ because deponding on if its started as application or imported module the name will be different. This is needed so that Flask knows where to look for templates, static files, and so on.
+
+
+#### @app.rout("/sms", methods=['GET', 'POST'])
+#### def sms_ahoy_reply():
+Define a function. @app.route('/sms') maps the function to the sms url. @route tells Flask what URL should trigger our function.
+
+
+#### methods = ['GET', 'POST'])
+**GET** - Sends data in unencrypted form to the server. Most common method.
+**POST** - Used to send HTML form data to server. Data received by POST method is not cached by server.
+
+#### resp = MessagingResponse
+create an object of Messaging Response Class
+
+#### resp.message("")
+Create a message using message() function of MessaginResponse.
 
 
 
