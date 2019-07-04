@@ -147,7 +147,7 @@ python run.py
 open a new terminal and run:
 ```
 ./ngrok http 5000
-```.
+```
 
 ## Receiving and replying to inbound sms messages with Flask
 
