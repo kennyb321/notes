@@ -245,11 +245,11 @@ if __name__ == "__main__":
 9)open terminal and run
 ``` 
 python run.py
-```.
+```
 10) in a seperate terminal, while **run.py** is still running, launch ngrok with following command:
 ```
 ./ngrok http 5000
-```.
+```
 
 In the url after **forwarding**, copy the url.
 11) Go to Twilio homepage -> **Console's Numbers Page**
