@@ -74,10 +74,131 @@ virtualenv --no-site-packages .
 twilio~=6.0.0
 ```
 
+-Then install both of these packages with pip in your terminal
 
 ```
-source bin/activate
+bin/pip install -r requirments.txt
 ```
+
+## Test Everything From Scratch
+make sure your virtual environment is activated
+
+```
+cd projectFolder
+source bin/activate 
+```
+
+-Then create a file named **run.py** and add following codes:
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/sms")
+def hello():
+	return "Hello World!"
+
+if __name == '__main__':
+	app.run(debug=True)
+
+```
+
+
+Go to your terminal, and run your **run.py**.
+
+you should see 
+```
+ * Serving Flask app "run" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 619-824-977
+```
+
+now navigate to *http://localhost:5000/sms* and you should see "Hello World!" Message.
+
+Now your ready to create our first Twilio messaging app!!
+
+
+## Allow Twilio to talk to your Flask application
+We are going to build a small Flask application to receive incoming messages. Before we do that, we need to make sure Twilio can reach your application.
+
+Most Twilio services use **webhooks** to communicate with your applicatrion. When Twilio receivs and SMS, it reaches out to a URL in our Application for instructions on how to handle the message.
+
+When working on your Flask Application in your development environment, your app is only available to the rest of your computer. We need to make it accessible over the internet.
+
+There are a couple ways to do this, such as
+*deploying application to Heroku
+*or AWS
+
+But we want somthing a little more lightweight to test Twilio.
+We are going to use **Ngrok**. 
+**ngrok** provides a unique URL on the **ngrok domain** which forwars incoming requests to your local development environment.
+
+Download ngrok and extract the binary into your project folder.
+run 
+```
+python run.py
+```
+
+open a new terminal and run:
+```
+./ngrok http 5000
+```.
+
+## Receiving and replying to inbound sms messages with Flask
+
+When somone sends a text message to our Twilio Phone number, Twilio Makes an HTP Request to your server asking for instructions on what to do next,
+Once your received the request, you can tell Twilio to reply with an SMS kick off a phone call, sotre details about the SMS in your databasem or trigger somthing else. All up to you!
+
+For this example, our flask app will reply to an incoming SMS message with a thank you to the sender, update our run.py file
+
+```
+from flask import Flask, request
+from twilio.twiml.messaging_response import MessagingResponse
+
+app = Flask(__name__)
+
+@app.route("/sms", methods=['GET', 'POST'])
+def sms_ahoy_reply():
+	#respond to incoming messages with a friendly response
+	resp = MessagingResponse()
+
+	#add a message
+	resp.message("Ahoy! Thanks so much for your message!")
+
+	return str(resp)
+
+if __name__ == '__main__':
+	app.run(debug=True)
+```
+
+When your Twilio Phone Number receives an iincoming message, Twilio will send an HTTP request to your server.
+save the file and restart the app. Double check that Ngrok is still running on your localhost port. Now Twilio can find your app. But first, **we need to tell Twilio where to look**.
+
+## Configure your webhook URL
+
+For Twilio to know where to look, you need to configure you Twilio phone number to call your webhook URL whenver a new message comes in.
+
+1)Log into Twilio.com and go to the **Console's Numbers Page**
+2)Click on your phone number.
+3) Find the Messaging section. The default “CONFIGURE WITH” is what you’ll need: "Webhooks/TwiML".
+4)n the “A MESSAGE COMES IN” section, select "Webhook" and paste in the URL you want to use. Make sure to add the /sms route to the end of your ngrok URL here:
+
+## Test your application
+
+If your localhost and NGrok Servers are up and running, werew ready for the fun part!!
+
+Send a text message from your mobile phone. You should see a HTTP request in your Ngrok console. Your Flask app will proccess the text message, and youll get your response back as an SMS.
+
+
+
+ 
+
+
 
 
 
