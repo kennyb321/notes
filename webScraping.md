@@ -25,3 +25,35 @@ enter this into the URL
 	<dt>UCJFp8uSYCjXOMnkUyb3CQ3Q&part=snippet.`</dt>
 		<dd>The Youtube ChannelIF we are using</dd>
 	</dl>
+Our function call yeilds this result:
+
+````
+{
+
+ "error": {
+
+  "errors": [
+
+   {
+
+    "domain": "usageLimits",
+
+    "reason": "dailyLimitExceededUnreg",
+
+    "message": "Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup.",
+
+    "extendedHelp": "https://code.google.com/apis/console"
+
+   }
+
+  ],
+
+  "code": 403,
+
+  "message": "Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup."
+
+ }
+
+}
+````
+
