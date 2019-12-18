@@ -251,3 +251,12 @@ This is the data that got returned
 }
 ````
 
+<h3>writing an API call script</h3>
+<h4>Script planning</h4>
+<ul>
+	<li>Import all needed librarys</li>
+	<li>Open the URL and read the API response</li>
+	<li>Identify each data point in your JSON and print it to a spreadsheet</li>
+</ul>
+
+
